@@ -2,6 +2,14 @@
 
 > AI驱动的智能虚拟人创建与Multi-Agent协作平台
 
+## 🚀 在线体验
+
+**[立即体验 AvatarX →](https://avatarx-platform-i7w6.vercel.app/)**
+
+无需安装，点击即可开始创建你的专属虚拟人！
+
+---
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green.svg)](https://fastapi.tiangolo.com/)
