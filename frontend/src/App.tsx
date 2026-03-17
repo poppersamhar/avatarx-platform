@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route, useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
+// API base URL - use relative path for Vercel deployment
+const API_BASE = '/api';
+
 // AI对话引导页面
 function AIWizardPage() {
   const navigate = useNavigate();
@@ -21,7 +24,7 @@ function AIWizardPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/wizard-chat/', {
+      const response = await fetch(`${API_BASE}/wizard-chat/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -52,7 +55,7 @@ function AIWizardPage() {
 
   const createAvatarFromAI = async (config: any) => {
     try {
-      const response = await fetch('http://localhost:8000/avatars/', {
+      const response = await fetch(`${API_BASE}/avatars/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(config)
@@ -183,8 +186,8 @@ function HomePage() {
 
   useEffect(() => {
     Promise.all([
-      fetch('http://localhost:8000/avatars/').then(r => r.json()),
-      fetch('http://localhost:8000/teams/').then(r => r.json())
+      fetch(`${API_BASE}/avatars/`).then(r => r.json()),
+      fetch(`${API_BASE}/teams/`).then(r => r.json())
     ]).then(([agentsData, teamsData]) => {
       setAgents(agentsData);
       setTeams(teamsData);
@@ -340,7 +343,7 @@ function AgentSetup() {
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/avatars/`)
+    fetch(`${API_BASE}/avatars/`)
       .then(r => r.json())
       .then(data => {
         const found = data.find((a: any) => a.id.toString() === id);
@@ -370,7 +373,7 @@ function AgentSetup() {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      await fetch(`http://localhost:8000/knowledge/${agent.id}/upload`, {
+      await fetch(`${API_BASE}/knowledge/${agent.id}/upload`, {
         method: 'POST',
         body: formData
       });
@@ -578,7 +581,7 @@ function AgentDetail() {
   const [trainingLoading, setTrainingLoading] = useState(false);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/avatars/`)
+    fetch(`${API_BASE}/avatars/`)
       .then(r => r.json())
       .then(data => {
         const found = data.find((a: any) => a.id.toString() === id);
@@ -595,7 +598,7 @@ function AgentDetail() {
 
   const loadTrainingHistory = async (agentId: number) => {
     try {
-      const response = await fetch(`http://localhost:8000/training/${agentId}/history`);
+      const response = await fetch(`${API_BASE}/training/${agentId}/history`);
       const data = await response.json();
       setTrainingHistory(data);
     } catch (error) {
@@ -610,7 +613,7 @@ function AgentDetail() {
     setInput('');
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/chat/', {
+      const response = await fetch(`${API_BASE}/chat/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ avatar_id: agent.id, message: userMsg.content })
@@ -627,7 +630,7 @@ function AgentDetail() {
   const handleDelete = async () => {
     if (!confirm(`确定要删除 ${agent.name} 吗？此操作不可恢复。`)) return;
     try {
-      await fetch(`http://localhost:8000/avatars/${agent.id}`, { method: 'DELETE' });
+      await fetch(`${API_BASE}/avatars/${agent.id}`, { method: 'DELETE' });
       navigate('/home');
     } catch (error) {
       alert('删除失败');
@@ -641,7 +644,7 @@ function AgentDetail() {
     }
     setTrainingLoading(true);
     try {
-      await fetch('http://localhost:8000/training/', {
+      await fetch(`${API_BASE}/training/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -663,7 +666,7 @@ function AgentDetail() {
   const handleDeleteTraining = async (trainingId: number) => {
     if (!confirm('确定要删除这条训练样本吗？')) return;
     try {
-      await fetch(`http://localhost:8000/training/${agent.id}/history/${trainingId}`, {
+      await fetch(`${API_BASE}/training/${agent.id}/history/${trainingId}`, {
         method: 'DELETE'
       });
       loadTrainingHistory(agent.id);
@@ -1031,8 +1034,8 @@ function TeamDetail() {
 
   useEffect(() => {
     Promise.all([
-      fetch('http://localhost:8000/teams/').then(r => r.json()),
-      fetch('http://localhost:8000/avatars/').then(r => r.json())
+      fetch(`${API_BASE}/teams/`).then(r => r.json()),
+      fetch(`${API_BASE}/avatars/`).then(r => r.json())
     ]).then(([teamsData, agentsData]) => {
       const found = teamsData.find((t: any) => t.id.toString() === id);
       setTeam(found);
@@ -1053,7 +1056,7 @@ function TeamDetail() {
     setInput('');
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/team-chat/', {
+      const response = await fetch(`${API_BASE}/team-chat/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ team_id: team.id, message: userMsg.content })
@@ -1074,7 +1077,7 @@ function TeamDetail() {
   const handleDeleteTeam = async () => {
     if (!confirm(`确定要删除团队 ${team.name} 吗？此操作不可恢复。`)) return;
     try {
-      await fetch(`http://localhost:8000/teams/${team.id}`, { method: 'DELETE' });
+      await fetch(`${API_BASE}/teams/${team.id}`, { method: 'DELETE' });
       navigate('/home');
     } catch (error) {
       alert('删除失败');
@@ -1083,7 +1086,7 @@ function TeamDetail() {
 
   const handleAddMember = async (avatarId: number) => {
     try {
-      const response = await fetch(`http://localhost:8000/teams/${team.id}/members`, {
+      const response = await fetch(`${API_BASE}/teams/${team.id}/members`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ avatar_id: avatarId })
@@ -1104,7 +1107,7 @@ function TeamDetail() {
   const handleRemoveMember = async (avatarId: number) => {
     if (!confirm('确定要移除这个成员吗？')) return;
     try {
-      const response = await fetch(`http://localhost:8000/teams/${team.id}/members/${avatarId}`, {
+      const response = await fetch(`${API_BASE}/teams/${team.id}/members/${avatarId}`, {
         method: 'DELETE'
       });
       if (response.ok) {
@@ -1123,7 +1126,7 @@ function TeamDetail() {
   const handleChangeRouter = async (avatarId: number) => {
     if (!confirm('确定要更换路由Agent吗？')) return;
     try {
-      const response = await fetch(`http://localhost:8000/teams/${team.id}/router`, {
+      const response = await fetch(`${API_BASE}/teams/${team.id}/router`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ avatar_id: avatarId })
