@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route, useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
-// API base URL - use relative path for Vercel deployment
-const API_BASE = '/api';
+// API base URL - Render backend
+const API_BASE = 'https://avatarx-backend.onrender.com';
 
 // AI对话引导页面
 function AIWizardPage() {
